@@ -1,0 +1,14 @@
+<iframe id="slide" height="100%" width="100%"> 
+</iframe>
+
+<script>
+    function nextSlide(id){
+        //link to the cashed slide
+        document.getElementById('slide').src = 'http://localhost:9090/http/localhost:3000/slide/' + id;
+        setTimeout(function(){
+            nextSlide(id + 1)
+        }, 5000);
+    }
+    
+    nextSlide({{id}})
+</script>
