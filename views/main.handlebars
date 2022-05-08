@@ -1,11 +1,9 @@
-<div id="slideA" height="100%" width="100%" class="slide fadeIn"> 
-</div>
-
-<div id="slideB" height="100%" width="100%" class="slide fadeOut">
-</div>
+{{#each buffers}}
+    <div id="{{this}}" height="100%" width="100%" class="slide"></div>
+{{/each}}
 
 <script>
-    const buffers = ['slideA', 'slideB'];
+    const buffers = {{{bufferArray}}};
 
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));

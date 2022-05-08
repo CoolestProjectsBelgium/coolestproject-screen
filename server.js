@@ -33,7 +33,9 @@ app.get('/slides', (req, res) => {
 app.get('/', (req, res) => {
     res.render('main',{
         slides_url: slides_url, // fetch list of slide + sleep info
-        backup_slide: backup_url // link to local url with general backup slide
+        backup_slide: backup_url, // link to local url with general backup slide
+        buffers: ['slide1', 'slide2'],
+        bufferArray: "['slide1', 'slide2']"
     });
 })
 
