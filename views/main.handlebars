@@ -1,14 +1,83 @@
-<iframe id="slide" height="100%" width="100%"> 
-</iframe>
+<div id="slideA" height="100%" width="100%" class="slide fadeIn"> 
+</div>
+
+<div id="slideB" height="100%" width="100%" class="slide fadeOut">
+</div>
 
 <script>
-    function nextSlide(id){
-        //link to the cashed slide
-        document.getElementById('slide').src = 'http://localhost:9090/http/localhost:3000/slide/' + id;
-        setTimeout(function(){
-            nextSlide(id + 1)
-        }, 5000);
+    const buffers = ['slideA', 'slideB'];
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    //buffer iterator
+    function cycleBuffers() {
+        
+        let index = 0;
+        return {
+             next: function() {
+                 if(buffers.length == index){
+                     index = 0;
+                 }
+                 return {
+                     value: buffers[index++],
+                     done: false
+                 }
+             }
+        }
     }
     
-    nextSlide({{id}})
+    new Promise(async () => {
+        const bufferIterator = new cycleBuffers();
+
+        // load backup slide
+        let slide_content = null;
+        slide_content = await fetch('{{backup_slide}}', {cache: "force-cache"});
+        if(!slide_content.ok){
+            throw new Exception("Backup slide not found !!");
+        }
+        // fill the buffers
+        const default_text = await slide_content.text();
+        for(let b of buffers){
+            document.getElementById(b).innerHTML = default_text; 
+        }
+
+        let b1 = bufferIterator.next().value;
+        let b2 = bufferIterator.next().value;
+        for(;;){
+            const response = await fetch('{{slides_url}}');
+            const slides = await response.json();
+            let sleepTime = 0;
+            let content_text = null;
+            for(let slide of slides){
+                slide_content = await fetch(slide.url);
+                content_text = await slide_content.text(); 
+                if(!slide_content.ok){
+                    // backup should always work (local file)
+                    content_text = default_text;
+                    sleepTime = 5000;
+                }
+                sleepTime = slide.sleep;
+                
+                // get next buffers
+                b2 = b1;
+                b1 = bufferIterator.next().value;
+                
+                const b1Node = document.getElementById(b1);
+                const b2Node = document.getElementById(b2);
+                b1Node.innerHTML = content_text;
+    
+                //switch visibility of buffer
+                b1Node.classList.remove("fadeOut");
+                b1Node.classList.add("fadeIn");
+                
+                b2Node.classList.remove("fadeIn");
+                b2Node.classList.add("fadeOut");
+                
+                await sleep(sleepTime);
+            }
+        }
+    });
+    
 </script>
