@@ -35,9 +35,8 @@
         if(!slide_content.ok){
             throw new Exception("Backup slide not found !!");
         }
-        // fill the buffers
         const default_text = await slide_content.text();
-        
+
         let b1 = bufferIterator.next().value;
         let b2 = bufferIterator.next().value;
         for(;;){
