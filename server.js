@@ -4,7 +4,8 @@ const engine = require('express-handlebars').engine
 
 const port = 3000
 const slides_url = '/slides';
-const backup_url = '/default.html'
+const backup_url = '/default.html';
+const message_url = '/message';
 
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
@@ -29,6 +30,10 @@ app.get('/slides', (req, res) => {
     res.json(slides)
 })
 
+//TODO replace with real code
+app.get('/message', (req, res) => {
+    res.send(`<h1>some text from server ${ new Date() } </h1>`)
+})
 
 app.get('/', (req, res) => {
     res.render('main',{
@@ -36,7 +41,8 @@ app.get('/', (req, res) => {
         backup_slide: backup_url, // link to local url with general backup slide
         buffers: ['slide1', 'slide2'],
         bufferArray: "['slide1', 'slide2']",
-        backup_wait: 5000
+        backup_wait: 5000,
+        message_url: message_url
     });
 })
 

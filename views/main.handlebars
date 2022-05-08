@@ -1,7 +1,9 @@
 {{#each buffers}}
     <div id="{{this}}" height="100%" width="100%" class="slide"></div>
 {{/each}}
-
+<div id="text">
+    <h1>Some info text</h1>
+</div>
 <script>
     const buffers = {{{bufferArray}}};
 
@@ -53,7 +55,15 @@
                     sleepTime = {{backup_wait}};
                 }
                 sleepTime = slide.sleep;
-                
+
+                //get message if any, if the call fails just keep displaying the last one
+                message_content = await fetch('{{message_url}}');
+                message_text = await message_content.text();
+                const textNode = document.getElementById('text');
+                if(message_content.ok){
+                    textNode.innerHTML = message_text;
+                }
+
                 // get next buffers
                 b2 = b1;
                 b1 = bufferIterator.next().value;
