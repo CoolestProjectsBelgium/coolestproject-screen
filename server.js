@@ -6,11 +6,12 @@ const port = 3000
 const slides_url = '/slides';
 const backup_url = '/default.html';
 const message_url = '/message';
+const sleep = 5000;
 
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', './views');
-app.use(express.static('public'))
+app.use(express.static('public'));
 
 //TODO replace with real code (first isolate backend code)
 app.get('/slide/:id', (req, res) => {
@@ -25,7 +26,7 @@ app.get('/slide/:id', (req, res) => {
 app.get('/slides', (req, res) => {
     const slides = [];
     for(var i = 0; i < 10; i++){
-        slides.push({url: '/slide/' + i, sleep: 5000 })
+        slides.push({url: '/slide/' + i, sleep: sleep })
     }
     res.json(slides)
 })
@@ -36,11 +37,12 @@ app.get('/message', (req, res) => {
 })
 
 app.get('/', (req, res) => {
+    const buffers = ['slide1', 'slide2'];
     res.render('main',{
         slides_url: slides_url, // fetch list of slide + sleep info
         backup_slide: backup_url, // link to local url with general backup slide
-        buffers: ['slide1', 'slide2'],
-        bufferArray: "['slide1', 'slide2']",
+        buffers: buffers,
+        bufferArray: JSON.stringify(buffers),
         backup_wait: 5000,
         message_url: message_url
     });
